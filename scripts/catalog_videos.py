@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate Obsidian catalog markdown stubs from yt-dlp info.json files.
 
-Scans a media directory for *.info.json files and writes a corresponding
+Scans the files directory for *.info.json files and writes a corresponding
 markdown file in the catalog directory if one does not already exist.
 Existing catalog files are never overwritten, so manual notes and tags are
 preserved across re-runs.
@@ -14,44 +14,44 @@ import json
 import sys
 from pathlib import Path
 
+from catalog_common import find_existing_catalog_file, render_frontmatter
+
 INFO_SUFFIX = ".info.json"
 DESCRIPTION_SUFFIX = ".description"
 VIDEO_EXTENSIONS = ("webm", "mp4", "mkv", "mov", "m4a", "mp3", "opus")
 DESCRIPTION_HEADING = "## Description"
 AUTO_SUMMARY_HEADING = "## Auto Summary"
 CHAPTERS_HEADING = "## Chapters"
-RESERVED_CATALOG_DIRS = {"media", ".obsidian", ".trash"}
 
 
-def find_video_filename(media_dir: Path, basename: str) -> str | None:
+def find_video_filename(files_dir: Path, basename: str) -> str | None:
     for extension in VIDEO_EXTENSIONS:
-        candidate = media_dir / f"{basename}.{extension}"
+        candidate = files_dir / f"{basename}.{extension}"
         if candidate.exists():
             return candidate.name
     return None
 
 
-def read_description(media_dir: Path, basename: str) -> str:
-    description_path = media_dir / f"{basename}{DESCRIPTION_SUFFIX}"
+def read_description(files_dir: Path, basename: str) -> str:
+    description_path = files_dir / f"{basename}{DESCRIPTION_SUFFIX}"
     if not description_path.exists():
         return ""
     return description_path.read_text(encoding="utf-8").strip()
 
 
 def render_markdown(info: dict, video_filename: str, description: str) -> str:
-    frontmatter = ["---"]
     source_url = info.get("webpage_url") or info.get("original_url") or ""
-    if source_url:
-        frontmatter.append(f"source: {source_url}")
-    frontmatter.append(f'media: "[[{video_filename}]]"')
-    frontmatter.append("tags: []")
-    frontmatter.append("---")
+    frontmatter = render_frontmatter(
+        type_name="video",
+        file_link=video_filename,
+        source_url=source_url or None,
+    )
 
-    body = [""]
+    body_parts = [""]
     if description:
-        body.extend([DESCRIPTION_HEADING, "", description, ""])
+        body_parts.extend([DESCRIPTION_HEADING, "", description, ""])
 
-    return "\n".join(frontmatter + body) + "\n"
+    return frontmatter + "\n".join(body_parts) + "\n"
 
 
 def add_description_to_existing(catalog_path: Path, description: str) -> bool:
@@ -77,18 +77,18 @@ def add_description_to_existing(catalog_path: Path, description: str) -> bool:
     return True
 
 
-def find_existing_catalog_file(catalog_dir: Path, basename: str) -> Path | None:
-    target_name = f"{basename}.md"
-    for candidate in catalog_dir.rglob(target_name):
-        relative_parents = candidate.relative_to(catalog_dir).parts[:-1]
-        if any(
-            part.startswith(".") or part in RESERVED_CATALOG_DIRS
-            for part in relative_parents
-        ):
-            continue
-        if candidate.name == target_name:
-            return candidate
-    return None
+def select_info_files(files_dir: Path, basenames: list[str]) -> list[Path]:
+    if not basenames:
+        return sorted(files_dir.glob(f"*{INFO_SUFFIX}"))
+
+    info_files: list[Path] = []
+    for basename in basenames:
+        clean_basename = Path(basename).name
+        info_path = files_dir / f"{clean_basename}{INFO_SUFFIX}"
+        if not info_path.is_file():
+            raise FileNotFoundError(f"info.json not found: {info_path}")
+        info_files.append(info_path)
+    return info_files
 
 
 def process_info_file(info_path: Path, catalog_dir: Path) -> tuple[bool, str]:
@@ -120,26 +120,39 @@ def process_info_file(info_path: Path, catalog_dir: Path) -> tuple[bool, str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--media-dir",
-        default="catalog/media",
-        help="Directory containing yt-dlp output (default: catalog/media)",
+        "--files-dir",
+        default="catalog/files",
+        help="Directory containing yt-dlp output (default: catalog/files)",
     )
     parser.add_argument(
         "--catalog-dir",
         default="catalog",
         help="Directory for Obsidian markdown files (default: catalog)",
     )
+    parser.add_argument(
+        "--basename",
+        action="append",
+        default=[],
+        help=(
+            "Process only this yt-dlp basename, without .info.json. "
+            "May be repeated."
+        ),
+    )
     args = parser.parse_args()
 
-    media_dir = Path(args.media_dir)
+    files_dir = Path(args.files_dir)
     catalog_dir = Path(args.catalog_dir)
 
-    if not media_dir.is_dir():
-        print(f"error: media directory not found: {media_dir}", file=sys.stderr)
+    if not files_dir.is_dir():
+        print(f"error: files directory not found: {files_dir}", file=sys.stderr)
         return 1
     catalog_dir.mkdir(parents=True, exist_ok=True)
 
-    info_files = sorted(media_dir.glob(f"*{INFO_SUFFIX}"))
+    try:
+        info_files = select_info_files(files_dir, args.basename)
+    except FileNotFoundError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
     if not info_files:
         print("no info.json files found")
         return 0

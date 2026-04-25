@@ -1,13 +1,15 @@
 ---
 source: https://www.youtube.com/watch?v=0fKBhvDjuy0
-media: "[[Powers of Ten™ (1977).webm]]"
+type: video
+file: "[[Powers of Ten™ (1977).webm]]"
 tags:
-  - physics
-  - astronomy
-  - biology
-  - cosmology
+  - charles-eames
+  - ray-eames
+  - ibm
+  - orders-of-magnitude
   - science-education
-  - film
+  - design
+  - 1970s
 ---
 
 ## Description
@@ -16,5 +18,5 @@ Powers of Ten takes us on an adventure in magnitudes.  Starting at a picnic by t
 
 ## Auto Summary
 
-Directed by Charles and Ray Eames for IBM, the film is an adaptation of Kees Boeke's 1957 book Cosmic View and is narrated by physicist Philip Morrison, who co-wrote the accompanying book with his wife Phylis. It was selected for the United States National Film Registry by the Library of Congress in 1998 and has become a touchstone of science communication, inspiring later works such as the Charles and Ray Eames sketch film Rough Sketch (1968) and IMAX's Cosmic Voyage.
+Directed by designers Charles and Ray Eames for IBM, the 1977 film expanded an earlier 1968 prototype and drew on Kees Boeke’s 1957 book Cosmic View. Its narration was by physicist Philip Morrison, and the film became a landmark of scientific visualization, selected for the U.S. National Film Registry in 1998.
 

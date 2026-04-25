@@ -1,15 +1,62 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $# -ne 1 ]]; then
-    echo "Usage: $0 <url>" >&2
+usage() {
+    echo "Usage: $(basename "$0") [--agent claude|codex] <url>" >&2
+}
+
+agent=claude
+positional=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --agent)
+            if [[ $# -lt 2 ]]; then
+                echo "Missing value for --agent" >&2
+                usage
+                exit 1
+            fi
+            agent=$2
+            shift 2
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        --)
+            shift
+            positional+=("$@")
+            break
+            ;;
+        -*)
+            echo "Unknown option: $1" >&2
+            usage
+            exit 1
+            ;;
+        *)
+            positional+=("$1")
+            shift
+            ;;
+    esac
+done
+
+case $agent in
+    claude|codex) ;;
+    *)
+        echo "Invalid --agent: $agent (expected claude or codex)" >&2
+        usage
+        exit 1
+        ;;
+esac
+
+if [[ ${#positional[@]} -ne 1 ]]; then
+    usage
     exit 1
 fi
 
-url=$1
+url=${positional[0]}
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 catalog_dir="$script_dir/catalog"
-output_dir="$catalog_dir/media"
+output_dir="$catalog_dir/files"
 env_file="$script_dir/.env"
 
 proxy_args=()
@@ -26,20 +73,44 @@ fi
 
 mkdir -p "$output_dir"
 
-cmd=(yt-dlp -v --write-subs --write-auto-subs --write-description --write-url --write-info-json --embed-chapters --replace-in-metadata title ":" "-" -o "%(title)s.%(ext)s" "${proxy_args[@]}" -P "$output_dir" "$url")
+downloaded_paths_file=$(mktemp)
+cleanup() {
+    rm -f -- "$downloaded_paths_file"
+}
+trap cleanup EXIT
+
+cmd=(yt-dlp -v --write-subs --write-auto-subs --write-description --write-url --write-info-json --embed-chapters --replace-in-metadata title ":" "-" --print-to-file "after_move:%(filepath)s" "$downloaded_paths_file" -o "%(title)s.%(ext)s" "${proxy_args[@]}" -P "$output_dir" "$url")
 printf '+'
 printf ' %q' "${cmd[@]}"
 printf '\n'
 "${cmd[@]}"
 
-generate_cmd=(uv run python "$script_dir/scripts/generate_catalog.py" --media-dir "$output_dir" --catalog-dir "$catalog_dir")
+downloaded_basenames=()
+while IFS= read -r downloaded_path; do
+    [[ -n "$downloaded_path" ]] || continue
+    filename=$(basename -- "$downloaded_path")
+    basename=${filename%.*}
+    downloaded_basenames+=("$basename")
+done < "$downloaded_paths_file"
+
+if [[ ${#downloaded_basenames[@]} -eq 0 ]]; then
+    echo "No downloaded files reported by yt-dlp; skipping catalog and categorize passes."
+    exit 0
+fi
+
+basename_args=()
+for basename in "${downloaded_basenames[@]}"; do
+    basename_args+=(--basename "$basename")
+done
+
+generate_cmd=(uv run python "$script_dir/scripts/catalog_videos.py" --files-dir "$output_dir" --catalog-dir "$catalog_dir" "${basename_args[@]}")
 printf '+'
 printf ' %q' "${generate_cmd[@]}"
 printf '\n'
 "${generate_cmd[@]}"
 
-summarize_cmd=(uv run python "$script_dir/scripts/auto_summarize.py" --media-dir "$output_dir" --catalog-dir "$catalog_dir")
+categorize_cmd=(uv run python "$script_dir/scripts/categorize.py" --files-dir "$output_dir" --catalog-dir "$catalog_dir" --agent "$agent" "${basename_args[@]}")
 printf '+'
-printf ' %q' "${summarize_cmd[@]}"
+printf ' %q' "${categorize_cmd[@]}"
 printf '\n'
-"${summarize_cmd[@]}"
+"${categorize_cmd[@]}"

@@ -1,13 +1,15 @@
 ---
 source: https://www.youtube.com/watch?v=NGFhc8R_uO4
-media: "[[Indistinguishable From Magic- Manufacturing Modern Computer Chips.webm]]"
+type: video
+file: "[[Indistinguishable From Magic- Manufacturing Modern Computer Chips.webm]]"
 tags:
-  - computer-science
-  - electrical-engineering
-  - semiconductors
-  - hardware
-  - physics
-  - manufacturing
+  - photolithography
+  - transistors
+  - materials-science
+  - process-engineering
+  - hacker-culture
+  - cleanrooms
+  - lecture
 ---
 
 ## Description
@@ -18,5 +20,5 @@ Modern computer chips are using transistors with features as small as 22nm. They
 
 ## Auto Summary
 
-Delivered at HOPE Number Nine (the 2012 Hackers On Planet Earth conference run by 2600 Magazine in NYC) by a semiconductor industry engineer. The 22nm node it covers was the bleeding edge at the time, corresponding to Intel's Ivy Bridge generation, which was the first commercial process to ship the 3D FinFET (tri-gate) transistors and high-k metal gate stacks discussed in the later chapters.
+HOPE Number Nine was a 2600: The Hacker Quarterly conference held in New York in July 2012, placing the talk in the hacker-conference tradition of treating industrial systems as things to inspect, understand, and repurpose. The technical context is the late pre-EUV scaling era: chipmakers were pushing deep-UV lithography, high-k metal gates, strained silicon, and early FinFET-style device geometry before extreme ultraviolet lithography became mainstream in leading-edge production.
 

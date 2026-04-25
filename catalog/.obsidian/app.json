@@ -1,6 +1,7 @@
 {
   "userIgnoreFilters": [
-    "media/"
+    "files/"
   ],
+  "attachmentFolderPath": "files",
   "promptDelete": true
 }

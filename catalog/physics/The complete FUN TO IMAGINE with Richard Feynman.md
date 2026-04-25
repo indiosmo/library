@@ -1,12 +1,15 @@
 ---
 source: https://www.youtube.com/watch?v=P1ww1IXRfTA
-media: "[[The complete FUN TO IMAGINE with Richard Feynman.webm]]"
+type: video
+file: "[[The complete FUN TO IMAGINE with Richard Feynman.webm]]"
+series: "[[Fun to Imagine]]"
 tags:
-  - physics
-  - science
-  - education
+  - feynman
+  - bbc
+  - 1980s
+  - science-communication
   - documentary
-  - history-of-science
+  - everyday-physics
 ---
 
 ## Description
@@ -28,5 +31,5 @@ All six original 'Fun to Imagine' episodes and stories in one video - total 66 m
 
 ## Auto Summary
 
-Fun to Imagine was a 1983 BBC2 series produced by Christopher Sykes, who later made the related documentary 'The Pleasure of Finding Things Out' with Feynman. The chapters capture Feynman's signature pedagogical style of building physical intuition from everyday phenomena rather than equations, the same approach that made his Caltech lectures legendary. The 'Ways of Thinking' segment in particular reflects on his father's influence and the difference between knowing the name of something and understanding it, themes Feynman returned to throughout his career.
+Fun to Imagine was directed and produced by BBC documentarian Christopher Sykes, who also made later Feynman-centered television material. The six-part run aired weekly in July-August 1983, and its later chapters are notable for treating explanation itself as the subject: scale, approximation, visualization, and the limits of simple “why” answers.
 

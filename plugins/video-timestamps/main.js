@@ -14,13 +14,18 @@ const VIDEO_EXTENSIONS = new Set([
 const INFO_SUFFIX = ".info.json";
 const TIMESTAMP_REGEX = /\b(\d{1,2}:\d{2}(?::\d{2})?)\b/g;
 const SKIP_PARENT_SELECTOR = "code, pre, a, .video-timestamp";
-const MEDIA_FRONTMATTER_KEY = "media";
+const MEDIA_FRONTMATTER_KEYS = new Set(["file", "media"]);
 const TOOLBAR_CLASS = "video-toolbar";
 const VIDEO_WAIT_ATTEMPTS = 40;
 const VIDEO_WAIT_INTERVAL_MS = 50;
 
 function isMediaKey(key) {
-    return key === MEDIA_FRONTMATTER_KEY || /^media[.[]/.test(key);
+    return (
+        MEDIA_FRONTMATTER_KEYS.has(key) ||
+        Array.from(MEDIA_FRONTMATTER_KEYS).some((prefix) =>
+            key.startsWith(`${prefix}.`) || key.startsWith(`${prefix}[`),
+        )
+    );
 }
 
 function parseTimestamp(text) {
@@ -202,6 +207,12 @@ class VideoTimestampsPlugin extends obsidian.Plugin {
     }
 
     async loadChapters(videoFile) {
+        const infoChapters = await this.loadInfoChapters(videoFile);
+        if (infoChapters.length > 0) return infoChapters;
+        return this.loadArticleChapters(videoFile);
+    }
+
+    async loadInfoChapters(videoFile) {
         const folder = videoFile.parent;
         if (!folder) return [];
         const targetName = `${videoFile.basename}${INFO_SUFFIX}`;
@@ -223,6 +234,68 @@ class VideoTimestampsPlugin extends obsidian.Plugin {
         } catch {
             return [];
         }
+    }
+
+    async loadArticleChapters(videoFile) {
+        const note = this.findNoteForVideo(videoFile);
+        if (!note) return [];
+        try {
+            const text = await this.app.vault.read(note);
+            return this.parseMarkdownChapters(text);
+        } catch {
+            return [];
+        }
+    }
+
+    findNoteForVideo(videoFile) {
+        const markdownFiles = this.app.vault.getMarkdownFiles();
+        for (const file of markdownFiles) {
+            const cache = this.app.metadataCache.getFileCache(file);
+            if (!cache) continue;
+            const mediaLinks = (cache.frontmatterLinks || []).filter((reference) =>
+                isMediaKey(reference.key),
+            );
+            for (const reference of mediaLinks) {
+                const target = this.app.metadataCache.getFirstLinkpathDest(
+                    reference.link,
+                    file.path,
+                );
+                if (target && target.path === videoFile.path) return file;
+            }
+        }
+        return null;
+    }
+
+    parseMarkdownChapters(text) {
+        const lines = text.split(/\r?\n/);
+        const chapters = [];
+        let inChapters = false;
+        for (const line of lines) {
+            if (!inChapters) {
+                if (/^#{1,6}\s+Chapters\s*$/i.test(line.trim())) {
+                    inChapters = true;
+                }
+                continue;
+            }
+            if (/^#{1,6}\s+\S/.test(line)) break;
+
+            const chapter = this.parseMarkdownChapterLine(line);
+            if (chapter) chapters.push(chapter);
+        }
+        return chapters;
+    }
+
+    parseMarkdownChapterLine(line) {
+        const match = line.match(
+            /^\s*(?:[-*+]\s+)?(\d{1,2}:\d{2}(?::\d{2})?)\s*(?:[-\u2013\u2014:]\s*)?(.*\S)\s*$/,
+        );
+        if (!match) return null;
+        const start = parseTimestamp(match[1]);
+        if (start === null) return null;
+        return {
+            start,
+            title: match[2].trim(),
+        };
     }
 
     async waitForVideoElement(leaf) {
