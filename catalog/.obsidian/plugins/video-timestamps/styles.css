@@ -1,0 +1,76 @@
+.video-timestamp {
+    color: var(--link-color);
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+}
+
+.video-timestamp:hover {
+    color: var(--link-color-hover);
+    text-decoration: underline;
+}
+
+.video-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+    padding: 0.75em 1em;
+    background: var(--background-secondary);
+    border-top: 1px solid var(--background-modifier-border);
+    font-size: var(--font-ui-small);
+}
+
+.video-toolbar-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+}
+
+.video-toolbar-heading {
+    font-weight: var(--font-medium);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.85em;
+}
+
+.video-chapter-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.video-chapter-link {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.75em;
+    padding: 0.25em 0.5em;
+    border-radius: var(--radius-s);
+    color: var(--text-normal);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.video-chapter-link:hover {
+    background: var(--background-modifier-hover);
+    text-decoration: none;
+}
+
+.video-chapter-item.is-active .video-chapter-link {
+    background: var(--background-modifier-hover);
+    font-weight: var(--font-medium);
+}
+
+.video-chapter-time {
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.video-chapter-title {
+    color: var(--text-normal);
+}

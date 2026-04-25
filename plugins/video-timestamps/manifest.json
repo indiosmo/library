@@ -1,0 +1,9 @@
+{
+    "id": "video-timestamps",
+    "name": "Video Timestamps",
+    "version": "0.1.0",
+    "minAppVersion": "1.4.0",
+    "description": "Click timestamps in a note to seek the linked video to that point.",
+    "author": "library",
+    "isDesktopOnly": false
+}

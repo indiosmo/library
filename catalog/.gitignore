@@ -1,0 +1,12 @@
+# Exclude the workspace layouts (prevents constant merge conflicts)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/workspace
+
+# Exclude OS-specific cache and trash files
+.trash/
+.DS_Store
+
+# (Optional) If you use plugins that require sensitive API keys (like ChatGPT/AI plugins), 
+# you might want to ignore their data files to prevent uploading your keys to GitHub.
+# .obsidian/plugins/*/data.json
