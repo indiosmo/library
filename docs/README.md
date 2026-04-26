@@ -1,8 +1,9 @@
 # docs
 
-Operational documentation for the library. Architecture and pipeline
-invariants live in `CLAUDE.md` at the repo root; this directory holds
-the runbooks for routine tasks.
+Operational and architectural documentation for the library.
+Pipeline invariants live in `CLAUDE.md` at the repo root; this
+directory holds runbooks for routine tasks and architectural
+decision records.
 
 ## Runbooks
 
@@ -16,3 +17,9 @@ the runbooks for routine tasks.
   note, or re-shelve only without losing summaries.
 - `runbooks/install-the-obsidian-plugin.md` — install the
   `video-timestamps` plugin into the vault.
+
+## Architecture decision records
+
+Decisions that shape the catalog and pipeline live in `adr/`.
+Records are immutable once accepted; superseding decisions get a
+new record that links back.
