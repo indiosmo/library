@@ -1,3 +1,10 @@
+Programming Library
+
+SICP full lisp course from mit
+Bartosz Milewski category theory course
+All sean parent's talks
+
+---
 Fun to imagine Feynman
 The inner life of the cell
 Indistinguishable from magic: https://www.youtube.com/watch?v=NGFhc8R_uO4
