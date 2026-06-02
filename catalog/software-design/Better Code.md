@@ -10,4 +10,8 @@ Better Code is Sean Parent's series of C++ talks arguing for simpler, more corre
 ## Volumes
 
 - [[Better Code- Runtime Polymorphism - Sean Parent]]
+- [[Better Code- Concurrency - Sean Parent]]
+- [[Better Code- Relationships - Sean Parent - CppCon 2019]]
+- [[CppCon 2015- Sean Parent ＂Better Code- Data Structures＂]]
+- [[CppCon 2018- Sean Parent “Better Code- Human Interface”]]
 

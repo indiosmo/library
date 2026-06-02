@@ -2,24 +2,14 @@ Programming Library
 
 SICP full lisp course from mit
 Bartosz Milewski category theory course
-All sean parent's talks
 
 ---
-Fun to imagine Feynman
-The inner life of the cell
-Indistinguishable from magic: https://www.youtube.com/watch?v=NGFhc8R_uO4
 Michael Sandel lectures on justice
 Sagan stardust https://www.youtube.com/watch?v=tLPkpBN6bEI
 Sagan 4th dimension https://www.youtube.com/watch?v=UnURElCzGc0
 Sagan pale blue dot https://www.youtube.com/watch?v=nl5dlbCh8lY
 Sagan erasthotenes https://www.youtube.com/watch?v=G8cbIWMv0rI
 Animations of Unseeable Biology" (Drew Berry – TED Talk)
-**"This is Water" (David Foster Wallace)**
-**"Powers of Ten" (Charles and Ray Eames, 1977)**
-"The Mother of All Demos" (Douglas Engelbart, 1968)
-**"Inventing on Principle" (Bret Victor)**
-Jim Simons numberphile interview
-Rich hickey talks
 Writing effectively: https://www.youtube.com/watch?v=vtIzMaLkCaM&list=PL-_Q2dOBiwt3l2KbzTSJr4iuXf9zkMsid
 
 ### **Biology, Biomechanics & Molecular Biology**
